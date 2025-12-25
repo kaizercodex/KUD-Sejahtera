@@ -40,6 +40,12 @@ class RolePermissionSeeder extends Seeder
             'petani.create',
             'petani.edit',
             'petani.delete',
+
+            // Kelompok
+            'kelompok.view',
+            'kelompok.create',
+            'kelompok.edit',
+            'kelompok.delete',
         ];
 
         foreach ($permissions as $permission) {

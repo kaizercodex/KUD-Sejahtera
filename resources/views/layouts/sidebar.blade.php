@@ -50,12 +50,12 @@
                 </li>
                 
                 @role('admin|operator|super admin')
-                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') || request()->routeIs('kelompok.*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-file-earmark-text-fill"></i>
                         <span>Data Master</span>
                     </a>
-                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') ? 'active' : '' }}">
+                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') || request()->routeIs('kelompok.*') ? 'active' : '' }}">
                         @can('user.view')
                         <li class="submenu-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
                             <a href="{{ route('user.index') }}" class="submenu-link">Data User</a>
@@ -77,6 +77,12 @@
                         @can('petani.view')
                         <li class="submenu-item {{ request()->routeIs('petani.*') ? 'active' : '' }}">
                             <a href="{{ route('petani.index') }}" class="submenu-link">Data Petani</a>
+                        </li>
+                        @endcan
+                        
+                        @can('kelompok.view')
+                        <li class="submenu-item {{ request()->routeIs('kelompok.*') ? 'active' : '' }}">
+                            <a href="{{ route('kelompok.index') }}" class="submenu-link">Data Kelompok</a>
                         </li>
                         @endcan
                     </ul>

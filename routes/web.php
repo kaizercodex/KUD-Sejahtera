@@ -6,6 +6,7 @@ use App\Http\Controllers\Datamaster\UserController;
 use App\Http\Controllers\Datamaster\RoleController;
 use App\Http\Controllers\Datamaster\PesertaPlasmaController;
 use App\Http\Controllers\Datamaster\PetaniController;
+use App\Http\Controllers\Datamaster\KelompokController;
 
 
 Route::get('/', function () {
@@ -62,6 +63,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/petani/{id}', [PetaniController::class, 'show'])->name('petani.show');
         Route::put('/petani/{id}', [PetaniController::class, 'update'])->name('petani.update');
         Route::delete('/petani/{id}', [PetaniController::class, 'destroy'])->name('petani.destroy');
+
+        Route::get('/kelompok', [KelompokController::class, 'index'])->name('kelompok.index');
+        Route::get('/kelompok/datatable', [KelompokController::class, 'getDatatablesKelompok'])->name('kelompok.datatable');
+        Route::post('/kelompok', [KelompokController::class, 'store'])->name('kelompok.store');
+        Route::get('/kelompok/{id}', [KelompokController::class, 'show'])->name('kelompok.show');
+        Route::put('/kelompok/{id}', [KelompokController::class, 'update'])->name('kelompok.update');
+        Route::delete('/kelompok/{id}', [KelompokController::class, 'destroy'])->name('kelompok.destroy');
     });
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
