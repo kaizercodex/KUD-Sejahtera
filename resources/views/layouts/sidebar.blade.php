@@ -50,12 +50,12 @@
                 </li>
                 
                 @role('admin|operator|super admin')
-                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-file-earmark-text-fill"></i>
                         <span>Data Master</span>
                     </a>
-                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') ? 'active' : '' }}">
+                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') ? 'active' : '' }}">
                         @can('user.view')
                         <li class="submenu-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
                             <a href="{{ route('user.index') }}" class="submenu-link">Data User</a>
@@ -70,7 +70,13 @@
                         
                         @can('peserta_plasma.view')
                         <li class="submenu-item {{ request()->routeIs('peserta-plasma.*') ? 'active' : '' }}">
-                            <a href="{{ route('peserta-plasma.index') }}" class="submenu-link">Peserta Plasma</a>
+                            <a href="{{ route('peserta-plasma.index') }}" class="submenu-link">Data Peserta Plasma</a>
+                        </li>
+                        @endcan
+                        
+                        @can('petani.view')
+                        <li class="submenu-item {{ request()->routeIs('petani.*') ? 'active' : '' }}">
+                            <a href="{{ route('petani.index') }}" class="submenu-link">Data Petani</a>
                         </li>
                         @endcan
                     </ul>

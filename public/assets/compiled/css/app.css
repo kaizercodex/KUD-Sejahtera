@@ -107,6 +107,8 @@
 
 :root,
 [data-bs-theme=light] {
+    --bs-custom-active-color: #43be78;
+    --bs-custom-bg-color: #eefbf4;
     --bs-blue: #435ebe;
     --bs-indigo: #6610f2;
     --bs-purple: #6f42c1;
@@ -180,7 +182,7 @@
     --bs-body-line-height: 1.5;
     --bs-body-color: #607080;
     --bs-body-color-rgb: 96, 112, 128;
-    --bs-body-bg: #e2f0fa;
+    --bs-body-bg: #f4fff9;
     --bs-body-bg-rgb: 242, 247, 255;
     --bs-emphasis-color: #000;
     --bs-emphasis-color-rgb: 0, 0, 0;
@@ -23134,7 +23136,7 @@ body .bi:before,
 }
 
 .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link {
-    background-color: #435ebe
+    background-color: var(--bs-custom-active-color)
 }
 
 .sidebar-wrapper .menu .sidebar-item.active>.sidebar-link span {
@@ -23176,7 +23178,7 @@ body .bi:before,
 }
 
 .sidebar-wrapper .menu .submenu .submenu-item.active>a {
-    color: #435ebe;
+    color: var(--bs-custom-active-color);
     font-weight: 700
 }
 
@@ -23192,7 +23194,7 @@ body .bi:before,
 
 .sidebar-wrapper .menu .submenu .submenu-item a:hover {
     margin-left: .3rem;
-    color: #435ebe
+    color: var(--bs-custom-active-color)
 }
 
 .sidebar-item.has-sub,

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Datamaster\UserController;
 use App\Http\Controllers\Datamaster\RoleController;
 use App\Http\Controllers\Datamaster\PesertaPlasmaController;
+use App\Http\Controllers\Datamaster\PetaniController;
 
 
 Route::get('/', function () {
@@ -54,6 +55,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta-plasma/{id}', [PesertaPlasmaController::class, 'show'])->name('peserta-plasma.show');
         Route::post('/peserta-plasma/{id}', [PesertaPlasmaController::class, 'update'])->name('peserta-plasma.update');
         Route::delete('/peserta-plasma/{id}', [PesertaPlasmaController::class, 'destroy'])->name('peserta-plasma.destroy');
+
+        Route::get('/petani', [PetaniController::class, 'index'])->name('petani.index');
+        Route::get('/petani/datatable', [PetaniController::class, 'getDatatablesPetani'])->name('petani.datatable');
+        Route::post('/petani', [PetaniController::class, 'store'])->name('petani.store');
+        Route::get('/petani/{id}', [PetaniController::class, 'show'])->name('petani.show');
+        Route::put('/petani/{id}', [PetaniController::class, 'update'])->name('petani.update');
+        Route::delete('/petani/{id}', [PetaniController::class, 'destroy'])->name('petani.destroy');
     });
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

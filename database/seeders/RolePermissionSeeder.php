@@ -34,6 +34,12 @@ class RolePermissionSeeder extends Seeder
             'peserta_plasma.create',
             'peserta_plasma.edit',
             'peserta_plasma.delete',
+
+            // Petani
+            'petani.view',
+            'petani.create',
+            'petani.edit',
+            'petani.delete',
         ];
 
         foreach ($permissions as $permission) {
