@@ -46,6 +46,24 @@ class RolePermissionSeeder extends Seeder
             'kelompok.create',
             'kelompok.edit',
             'kelompok.delete',
+
+            // Blok
+            'blok.view',
+            'blok.create',
+            'blok.edit',
+            'blok.delete',
+
+            // Lahan
+            'lahan.view',
+            'lahan.create',
+            'lahan.edit',
+            'lahan.delete',
+
+            // Simpanan
+            'simpanan.view',
+            'simpanan.create',
+            'simpanan.edit',
+            'simpanan.delete',
         ];
 
         foreach ($permissions as $permission) {

@@ -4,17 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PesertaPlasma extends Model
+class Blok extends Model
 {
-    protected $table = 'peserta_plasma';
+    protected $table = 'blok';
+    
     protected $fillable = [
-        'no_reg',
-        'nama',
-        'nik_ktp',
-        'no_kk',
-        'alamat',
-        'no_hp',
-        'photo',
+        'kode_blok',
         'kelompok_id',
     ];
 

@@ -17,7 +17,7 @@ class PesertaPlasmaController extends Controller
 
     public function getDatatablesPesertaPlasma()
     {
-        $pesertaPlasma = PesertaPlasma::select('id', 'no_reg', 'nama', 'nik_ktp', 'no_kk', 'alamat', 'no_hp', 'photo', 'kelompok_id', 'created_at', 'updated_at');
+        $pesertaPlasma = PesertaPlasma::with('kelompok')->select('id', 'no_reg', 'nama', 'nik_ktp', 'no_kk', 'alamat', 'no_hp', 'photo', 'kelompok_id', 'created_at', 'updated_at');
         
         return DataTables::of($pesertaPlasma)
             ->addColumn('photo_url', function($row) {
@@ -25,6 +25,9 @@ class PesertaPlasmaController extends Controller
                     return asset('uploads/peserta_plasma/' . $row->photo);
                 }
                 return null;
+            })
+            ->addColumn('kelompok', function($row) {
+                return $row->kelompok->nama_kelompok;
             })
             ->make(true);
     }
@@ -78,7 +81,7 @@ class PesertaPlasmaController extends Controller
 
     public function show($id)
     {
-        $pesertaPlasma = PesertaPlasma::findOrFail($id);
+        $pesertaPlasma = PesertaPlasma::with('kelompok')->findOrFail($id);
         
         $data = [
             'id' => $pesertaPlasma->id,
@@ -89,6 +92,7 @@ class PesertaPlasmaController extends Controller
             'alamat' => $pesertaPlasma->alamat,
             'no_hp' => $pesertaPlasma->no_hp,
             'kelompok_id' => $pesertaPlasma->kelompok_id,
+            'kelompok' => $pesertaPlasma->kelompok,
             'photo' => $pesertaPlasma->photo,
             'photo_url' => $pesertaPlasma->photo ? asset('uploads/peserta_plasma/' . $pesertaPlasma->photo) : null
         ];

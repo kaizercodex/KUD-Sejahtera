@@ -11,4 +11,9 @@ class Kelompok extends Model
         'nama_kelompok',
         'ketua_kelompok',
     ];
+
+    public function PesertaPlasma()
+    {
+        return $this->hasMany(PesertaPlasma::class);
+    }
 }

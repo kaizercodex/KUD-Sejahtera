@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Data Master Petani')
+@section('title', 'Data Simpanan')
 
 @section('content')
 <div class="page-heading">
@@ -10,11 +10,11 @@
                 <nav aria-label="breadcrumb" class="breadcrumb-header">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Data Master Petani</li>
+                        <li class="breadcrumb-item active" aria-current="page">Data Simpanan</li>
                     </ol>
                 </nav>
-                <h3>Data Master Petani</h3>
-                <p class="text-subtitle text-muted">Kelola data petani</p>
+                <h3>Data Simpanan</h3>
+                <p class="text-subtitle text-muted">Kelola data simpanan anggota</p>
             </div>
         </div>
     </div>
@@ -23,23 +23,22 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Daftar Petani</h5>
-                    <button type="button" class="btn btn-primary" id="btnTambahPetani">
-                        <i class="bi bi-plus-circle"></i> Tambah Petani
+                    <h5 class="card-title mb-0">Daftar Simpanan</h5>
+                    <button type="button" class="btn btn-primary" id="btnTambahSimpanan">
+                        <i class="bi bi-plus-circle"></i> Tambah Simpanan
                     </button>
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablePetani" style="width:100%">
+                    <table class="table table-striped table-hover" id="tableSimpanan" style="width:100%">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                <th>Alamat</th>
-                                <th>No HP</th>
-                                <th>Dibuat</th>
-                                <th>Diupdate</th>
+                                <th>Peserta</th>
+                                <th>Jenis</th>
+                                <th>Nominal</th>
+                                <th>Tanggal</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -54,14 +53,46 @@
 @endsection
 
 @push('scripts')
-@include('datamaster.petani.modal-form')
+@include('datamaster.simpanan.modal-form')
 <script>
 $(document).ready(function() {
-    var table = $('#tablePetani').DataTable({
+    $('#peserta_id').select2({
+        theme: 'bootstrap-5',
+        dropdownParent: $('#modalSimpanan'),
+        placeholder: 'Pilih Peserta',
+        allowClear: true,
+        ajax: {
+            url: "{{ route('api.select2.peserta') }}",
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    search: params.term,
+                    page: params.page || 1
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data.data.map(function(item) {
+                        return {
+                            id: item.id,
+                            text: item.nama + ' (' + item.no_reg + ')'
+                        };
+                    }),
+                    pagination: {
+                        more: data.current_page < data.last_page
+                    }
+                };
+            },
+            cache: true
+        }
+    });
+
+    var table = $('#tableSimpanan').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('petani.datatable') }}",
+            url: "{{ route('simpanan.datatable') }}",
             type: 'GET'
         },
         columns: [
@@ -75,49 +106,25 @@ $(document).ready(function() {
                 }
             },
             {
-                data: 'nama',
-                name: 'nama'
+                data: 'peserta_nama',
+                name: 'peserta.nama'
             },
             {
-                data: 'alamat',
-                name: 'alamat'
+                data: 'jenis',
+                name: 'jenis'
             },
             {
-                data: 'no_hp',
-                name: 'no_hp'
-            },
-            {
-                data: 'created_at',
-                name: 'created_at',
+                data: 'nominal_formatted',
+                name: 'nominal',
                 render: function(data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('id-ID', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                    return '-';
+                    return data;
                 }
             },
             {
-                data: 'updated_at',
-                name: 'updated_at',
+                data: 'tanggal',
+                name: 'tanggal',
                 render: function(data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('id-ID', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                    return '-';
+                    return new Date(data).toLocaleDateString('id-ID');
                 }
             },
             {
@@ -154,65 +161,79 @@ $(document).ready(function() {
                 previous: "Sebelumnya"
             }
         },
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f><rtip',
         pageLength: 10,
         order: [[4, 'desc']]
     });
 
-    $('#btnTambahPetani').on('click', function() {
-        $('#modalPetaniLabel').text('Tambah Petani');
-        $('#formPetani')[0].reset();
-        $('#petaniId').val('');
-        $('#modalPetani').modal('show');
+    $('#nominal').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
     });
 
-    $('#tablePetani').on('click', '.btn-edit', function() {
+    $('#btnTambahSimpanan').on('click', function() {
+        $('#modalSimpananLabel').text('Tambah Simpanan');
+        $('#formSimpanan')[0].reset();
+        $('#simpananId').val('');
+        $('#peserta_id').val(null).trigger('change');
+        $('#modalSimpanan').modal('show');
+    });
+
+    $('#tableSimpanan').on('click', '.btn-edit', function() {
         var id = $(this).data('id');
         
         $.ajax({
-            url: "{{ route('petani.show', ':id') }}".replace(':id', id),
+            url: "{{ route('simpanan.show', ':id') }}".replace(':id', id),
             type: 'GET',
             success: function(response) {
                 if (response.success) {
-                    $('#modalPetaniLabel').text('Edit Petani');
-                    $('#petaniId').val(response.data.id);
-                    $('#nama').val(response.data.nama);
-                    $('#alamat').val(response.data.alamat);
-                    $('#no_hp').val(response.data.no_hp);
-                    $('#modalPetani').modal('show');
+                    $('#modalSimpananLabel').text('Edit Simpanan');
+                    $('#simpananId').val(response.data.id);
+                    $('#jenis').val(response.data.jenis);
+                    $('#nominal').val(response.data.nominal);
+                    $('#tanggal').val(response.data.tanggal);
+                    
+                    if (response.data.peserta_id && response.data.peserta) {
+                        var option = new Option(response.data.peserta.nama + ' (' + response.data.peserta.no_reg + ')', response.data.peserta_id, true, true);
+                        $('#peserta_id').append(option).trigger('change');
+                    } else {
+                        $('#peserta_id').val(null).trigger('change');
+                    }
+                    
+                    $('#modalSimpanan').modal('show');
                 }
             },
             error: function(xhr) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Gagal memuat data petani'
+                    text: 'Gagal memuat data simpanan'
                 });
             }
         });
     });
 
-    $('#formPetani').on('submit', function(e) {
+    $('#formSimpanan').on('submit', function(e) {
         e.preventDefault();
         
-        var petaniId = $('#petaniId').val();
-        var url = petaniId ? "{{ route('petani.update', ':id') }}".replace(':id', petaniId) : "{{ route('petani.store') }}";
-        var method = petaniId ? 'PUT' : 'POST';
+        var simpananId = $('#simpananId').val();
+        var url = simpananId ? "{{ route('simpanan.update', ':id') }}".replace(':id', simpananId) : "{{ route('simpanan.store') }}";
+        var method = simpananId ? 'PUT' : 'POST';
         
         var formData = {
-            nama: $('#nama').val(),
-            alamat: $('#alamat').val(),
-            no_hp: $('#no_hp').val(),
+            peserta_id: $('#peserta_id').val(),
+            jenis: $('#jenis').val(),
+            nominal: $('#nominal').val(),
+            tanggal: $('#tanggal').val(),
             _token: '{{ csrf_token() }}'
         };
-
+        
         $.ajax({
             url: url,
             type: method,
             data: formData,
             success: function(response) {
                 if (response.success) {
-                    $('#modalPetani').modal('hide');
+                    $('#modalSimpanan').modal('hide');
                     table.ajax.reload();
                     Swal.fire({
                         icon: 'success',
@@ -244,12 +265,12 @@ $(document).ready(function() {
         });
     });
 
-    $('#tablePetani').on('click', '.btn-delete', function() {
+    $('#tableSimpanan').on('click', '.btn-delete', function() {
         var id = $(this).data('id');
         
         Swal.fire({
             title: 'Konfirmasi Hapus',
-            text: 'Apakah Anda yakin ingin menghapus data petani ini?',
+            text: 'Apakah Anda yakin ingin menghapus simpanan ini?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -259,7 +280,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('petani.destroy', ':id') }}".replace(':id', id),
+                    url: "{{ route('simpanan.destroy', ':id') }}".replace(':id', id),
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -277,7 +298,7 @@ $(document).ready(function() {
                         }
                     },
                     error: function(xhr) {
-                        var message = xhr.responseJSON?.message || 'Gagal menghapus data petani';
+                        var message = xhr.responseJSON?.message || 'Gagal menghapus simpanan';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',

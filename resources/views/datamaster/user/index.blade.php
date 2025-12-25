@@ -190,7 +190,7 @@ $(document).ready(function() {
                 previous: "Sebelumnya"
             }
         },
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f><rtip',
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
         pageLength: 10,
         order: [[4, 'desc']]
     });

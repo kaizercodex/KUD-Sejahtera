@@ -37,8 +37,7 @@
                                 <th>No</th>
                                 <th>Nama Kelompok</th>
                                 <th>Ketua Kelompok</th>
-                                <th>Dibuat</th>
-                                <th>Diupdate</th>
+                                <th>Jumlah Anggota</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -82,38 +81,8 @@ $(document).ready(function() {
                 name: 'ketua_kelompok'
             },
             {
-                data: 'created_at',
-                name: 'created_at',
-                render: function(data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('id-ID', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                    return '-';
-                }
-            },
-            {
-                data: 'updated_at',
-                name: 'updated_at',
-                render: function(data) {
-                    if (data) {
-                        var date = new Date(data);
-                        return date.toLocaleDateString('id-ID', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                    return '-';
-                }
+                data: 'jumlah_anggota',
+                name: 'jumlah_anggota'
             },
             {
                 data: 'id',
@@ -149,7 +118,7 @@ $(document).ready(function() {
                 previous: "Sebelumnya"
             }
         },
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f><rtip',
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
         pageLength: 10,
         order: [[3, 'desc']]
     });

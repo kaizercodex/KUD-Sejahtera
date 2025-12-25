@@ -16,9 +16,13 @@ class KelompokController extends Controller
 
     public function getDatatablesKelompok()
     {
-        $kelompok = Kelompok::select('id', 'nama_kelompok', 'ketua_kelompok', 'created_at', 'updated_at');
+        $kelompok = Kelompok::with('PesertaPlasma')->select('id', 'nama_kelompok', 'ketua_kelompok', 'created_at', 'updated_at');
         
-        return DataTables::of($kelompok)->make(true);
+        return DataTables::of($kelompok)
+        ->addColumn('jumlah_anggota', function($row) {
+            return $row->PesertaPlasma->count();
+        })
+        ->make(true);
     }
 
     public function store(Request $request)

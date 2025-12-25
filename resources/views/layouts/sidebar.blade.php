@@ -48,23 +48,43 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                
+
                 @role('admin|operator|super admin')
-                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') || request()->routeIs('kelompok.*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-file-earmark-text-fill"></i>
-                        <span>Data Master</span>
+                        <span>Data Master Sistem</span>
                     </a>
-                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') || request()->routeIs('kelompok.*') ? 'active' : '' }}">
+                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') ? 'active' : '' }}">
                         @can('user.view')
                         <li class="submenu-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
                             <a href="{{ route('user.index') }}" class="submenu-link">Data User</a>
                         </li>
                         @endcan
-                        
                         @can('role.view')
                         <li class="submenu-item {{ request()->routeIs('role.*') ? 'active' : '' }}">
                             <a href="{{ route('role.index') }}" class="submenu-link">Data Role</a>
+                        </li>
+                        @endcan
+                    </ul>
+                </li>
+                @endrole
+                
+                <li class="sidebar-item has-sub {{ request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') || request()->routeIs('kelompok.*') || request()->routeIs('blok.*') || request()->routeIs('lahan.*')}}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                        <span>Data Master</span>
+                    </a>
+                    <ul class="submenu {{ request()->routeIs('peserta-plasma.*') || request()->routeIs('petani.*') || request()->routeIs('kelompok.*') || request()->routeIs('blok.*') || request()->routeIs('lahan.*')}}">                        
+                        @can('kelompok.view')
+                        <li class="submenu-item {{ request()->routeIs('kelompok.*') ? 'active' : '' }}">
+                            <a href="{{ route('kelompok.index') }}" class="submenu-link">Data Kelompok</a>
+                        </li>
+                        @endcan
+
+                        @can('blok.view')
+                        <li class="submenu-item {{ request()->routeIs('blok.*') ? 'active' : '' }}">
+                            <a href="{{ route('blok.index') }}" class="submenu-link">Data Blok</a>
                         </li>
                         @endcan
                         
@@ -80,29 +100,22 @@
                         </li>
                         @endcan
                         
-                        @can('kelompok.view')
-                        <li class="submenu-item {{ request()->routeIs('kelompok.*') ? 'active' : '' }}">
-                            <a href="{{ route('kelompok.index') }}" class="submenu-link">Data Kelompok</a>
+                        @can('lahan.view')
+                        <li class="submenu-item {{ request()->routeIs('lahan.*') ? 'active' : '' }}">
+                            <a href="{{ route('lahan.index') }}" class="submenu-link">Data Lahan</a>
                         </li>
                         @endcan
                     </ul>
                 </li>
-                @endrole
                 
-                <li class="sidebar-item">
-                    <a href="#" class='sidebar-link'>
-                        <i class="bi bi-people-fill"></i>
-                        <span>Data Anggota</span>
+                @can('simpanan.view')
+                <li class="sidebar-item {{ request()->routeIs('simpanan.*') ? 'active' : '' }}">
+                    <a href="{{ route('simpanan.index') }}" class='sidebar-link'>
+                        <i class="bi bi-wallet2"></i>
+                        <span>Simpanan</span>
                     </a>
                 </li>
-                
-                <li class="sidebar-item">
-                    <a href="#" class='sidebar-link'>
-                        <i class="bi bi-person-circle"></i>
-                        <span>Profil Pengguna</span>
-                    </a>
-                </li>
-                
+                @endcan
             </ul>
         </div>
     </div>

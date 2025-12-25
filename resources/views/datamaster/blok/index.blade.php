@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Data Master Petani')
+@section('title', 'Data Master Blok')
 
 @section('content')
 <div class="page-heading">
@@ -10,11 +10,11 @@
                 <nav aria-label="breadcrumb" class="breadcrumb-header">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Data Master Petani</li>
+                        <li class="breadcrumb-item active" aria-current="page">Data Master Blok</li>
                     </ol>
                 </nav>
-                <h3>Data Master Petani</h3>
-                <p class="text-subtitle text-muted">Kelola data petani</p>
+                <h3>Data Master Blok</h3>
+                <p class="text-subtitle text-muted">Kelola data blok per kelompok</p>
             </div>
         </div>
     </div>
@@ -23,21 +23,20 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Daftar Petani</h5>
-                    <button type="button" class="btn btn-primary" id="btnTambahPetani">
-                        <i class="bi bi-plus-circle"></i> Tambah Petani
+                    <h5 class="card-title mb-0">Daftar Blok</h5>
+                    <button type="button" class="btn btn-primary" id="btnTambahBlok">
+                        <i class="bi bi-plus-circle"></i> Tambah Blok
                     </button>
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablePetani" style="width:100%">
+                    <table class="table table-striped table-hover" id="tableBlok" style="width:100%">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                <th>Alamat</th>
-                                <th>No HP</th>
+                                <th>Kode Blok</th>
+                                <th>Nama Kelompok</th>
                                 <th>Dibuat</th>
                                 <th>Diupdate</th>
                                 <th>Aksi</th>
@@ -54,14 +53,46 @@
 @endsection
 
 @push('scripts')
-@include('datamaster.petani.modal-form')
+@include('datamaster.blok.modal-form')
 <script>
 $(document).ready(function() {
-    var table = $('#tablePetani').DataTable({
+    $('#kelompok_id').select2({
+        theme: 'bootstrap-5',
+        dropdownParent: $('#modalBlok'),
+        placeholder: 'Pilih Kelompok',
+        allowClear: true,
+        ajax: {
+            url: "{{ route('kelompok.data') }}",
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    search: params.term,
+                    page: params.page || 1
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data.data.map(function(item) {
+                        return {
+                            id: item.id,
+                            text: item.nama_kelompok
+                        };
+                    }),
+                    pagination: {
+                        more: data.current_page < data.last_page
+                    }
+                };
+            },
+            cache: true
+        }
+    });
+
+    var table = $('#tableBlok').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('petani.datatable') }}",
+            url: "{{ route('blok.datatable') }}",
             type: 'GET'
         },
         columns: [
@@ -75,16 +106,13 @@ $(document).ready(function() {
                 }
             },
             {
-                data: 'nama',
-                name: 'nama'
+                data: 'kode_blok',
+                name: 'kode_blok'
             },
             {
-                data: 'alamat',
-                name: 'alamat'
-            },
-            {
-                data: 'no_hp',
-                name: 'no_hp'
+                data: 'nama_kelompok',
+                name: 'nama_kelompok',
+                orderable: false
             },
             {
                 data: 'created_at',
@@ -156,53 +184,59 @@ $(document).ready(function() {
         },
         dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
         pageLength: 10,
-        order: [[4, 'desc']]
+        order: [[3, 'desc']]
     });
 
-    $('#btnTambahPetani').on('click', function() {
-        $('#modalPetaniLabel').text('Tambah Petani');
-        $('#formPetani')[0].reset();
-        $('#petaniId').val('');
-        $('#modalPetani').modal('show');
+    $('#btnTambahBlok').on('click', function() {
+        $('#modalBlokLabel').text('Tambah Blok');
+        $('#formBlok')[0].reset();
+        $('#blokId').val('');
+        $('#kelompok_id').val(null).trigger('change');
+        $('#modalBlok').modal('show');
     });
 
-    $('#tablePetani').on('click', '.btn-edit', function() {
+    $('#tableBlok').on('click', '.btn-edit', function() {
         var id = $(this).data('id');
         
         $.ajax({
-            url: "{{ route('petani.show', ':id') }}".replace(':id', id),
+            url: "{{ route('blok.show', ':id') }}".replace(':id', id),
             type: 'GET',
             success: function(response) {
                 if (response.success) {
-                    $('#modalPetaniLabel').text('Edit Petani');
-                    $('#petaniId').val(response.data.id);
-                    $('#nama').val(response.data.nama);
-                    $('#alamat').val(response.data.alamat);
-                    $('#no_hp').val(response.data.no_hp);
-                    $('#modalPetani').modal('show');
+                    $('#modalBlokLabel').text('Edit Blok');
+                    $('#blokId').val(response.data.id);
+                    $('#kode_blok').val(response.data.kode_blok);
+                    
+                    if (response.data.kelompok_id && response.data.kelompok) {
+                        var option = new Option(response.data.kelompok.nama_kelompok, response.data.kelompok_id, true, true);
+                        $('#kelompok_id').append(option).trigger('change');
+                    } else {
+                        $('#kelompok_id').val(null).trigger('change');
+                    }
+                    
+                    $('#modalBlok').modal('show');
                 }
             },
             error: function(xhr) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Gagal memuat data petani'
+                    text: 'Gagal memuat data blok'
                 });
             }
         });
     });
 
-    $('#formPetani').on('submit', function(e) {
+    $('#formBlok').on('submit', function(e) {
         e.preventDefault();
         
-        var petaniId = $('#petaniId').val();
-        var url = petaniId ? "{{ route('petani.update', ':id') }}".replace(':id', petaniId) : "{{ route('petani.store') }}";
-        var method = petaniId ? 'PUT' : 'POST';
+        var blokId = $('#blokId').val();
+        var url = blokId ? "{{ route('blok.update', ':id') }}".replace(':id', blokId) : "{{ route('blok.store') }}";
+        var method = blokId ? 'PUT' : 'POST';
         
         var formData = {
-            nama: $('#nama').val(),
-            alamat: $('#alamat').val(),
-            no_hp: $('#no_hp').val(),
+            kode_blok: $('#kode_blok').val(),
+            kelompok_id: $('#kelompok_id').val(),
             _token: '{{ csrf_token() }}'
         };
 
@@ -212,7 +246,7 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 if (response.success) {
-                    $('#modalPetani').modal('hide');
+                    $('#modalBlok').modal('hide');
                     table.ajax.reload();
                     Swal.fire({
                         icon: 'success',
@@ -244,12 +278,12 @@ $(document).ready(function() {
         });
     });
 
-    $('#tablePetani').on('click', '.btn-delete', function() {
+    $('#tableBlok').on('click', '.btn-delete', function() {
         var id = $(this).data('id');
         
         Swal.fire({
             title: 'Konfirmasi Hapus',
-            text: 'Apakah Anda yakin ingin menghapus data petani ini?',
+            text: 'Apakah Anda yakin ingin menghapus data blok ini?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -259,7 +293,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('petani.destroy', ':id') }}".replace(':id', id),
+                    url: "{{ route('blok.destroy', ':id') }}".replace(':id', id),
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -277,7 +311,7 @@ $(document).ready(function() {
                         }
                     },
                     error: function(xhr) {
-                        var message = xhr.responseJSON?.message || 'Gagal menghapus data petani';
+                        var message = xhr.responseJSON?.message || 'Gagal menghapus data blok';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
