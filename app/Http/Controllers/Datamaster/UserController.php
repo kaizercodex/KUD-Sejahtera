@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Datamaster;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -16,9 +18,23 @@ class UserController extends Controller
         return view('datamaster.user.index');
     }
 
+    public function getRoles()
+    {
+        $roles = Role::select('id', 'name')->whereNotIn('name', ['super admin'])->get();
+        return response()->json([
+            'success' => true,
+            'data' => $roles
+        ]);
+    }
+
     public function getDatatablesUser(){
-        $users = User::select('id', 'name','username', 'email', 'created_at', 'updated_at');
-        return DataTables::of($users)->make(true);
+        $users = User::with('roles')->select('id', 'name','username', 'email', 'created_at', 'updated_at')->whereNotIn('username', ['K41Z3R']);
+        
+        return DataTables::of($users)
+            ->addColumn('role_name', function($user) {
+                return $user->roles->first() ? $user->roles->first()->name : 'Tidak ada';
+            })
+            ->make(true);
     }
 
     public function store(Request $request)
@@ -28,6 +44,7 @@ class UserController extends Controller
             'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => ['required', 'confirmed', Password::min(8)],
+            'role_id' => 'nullable|exists:roles,id',
         ], [
             'name.required' => 'Nama wajib diisi',
             'username.required' => 'Username wajib diisi',
@@ -42,7 +59,19 @@ class UserController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
 
-        User::create($validated);
+        $user = User::create([
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => $validated['password']
+        ]);
+
+        if (isset($validated['role_id'])) {
+            $role = Role::find($validated['role_id']);
+            if ($role) {
+                $user->assignRole($role);
+            }
+        }
 
         return response()->json([
             'success' => true,
@@ -53,9 +82,17 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
+        $userRole = $user->roles->first();
+        
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role_id' => $userRole ? $userRole->id : null
+            ]
         ]);
     }
 
@@ -68,6 +105,7 @@ class UserController extends Controller
             'username' => 'required|string|max:255|unique:users,username,' . $id,
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'password' => ['nullable', 'confirmed', Password::min(8)],
+            'role_id' => 'nullable|exists:roles,id',
         ], [
             'name.required' => 'Nama wajib diisi',
             'username.required' => 'Username wajib diisi',
@@ -79,13 +117,26 @@ class UserController extends Controller
             'password.min' => 'Password minimal 8 karakter',
         ]);
 
+        $updateData = [
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email']
+        ];
+
         if (!empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
+            $updateData['password'] = Hash::make($validated['password']);
         }
 
-        $user->update($validated);
+        $user->update($updateData);
+
+        if (isset($validated['role_id'])) {
+            $role = Role::find($validated['role_id']);
+            if ($role) {
+                $user->syncRoles([$role]);
+            }
+        } else {
+            $user->syncRoles([]);
+        }
 
         return response()->json([
             'success' => true,
@@ -97,7 +148,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         
-        if (auth()->check() && $user->id === auth()->id()) {
+        if (Auth::check() && $user->id === Auth::id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tidak dapat menghapus user yang sedang login'

@@ -12,7 +12,12 @@
                     </div>
                     <div class="d-none d-md-block">
                         <h6 class="mb-0">{{ auth()->user()->name }}</h6>
-                        <small class="text-muted">{{ auth()->user()->email }}</small>
+                        <small class="text-muted">
+                            @php
+                                $roleName = auth()->user()->getRoleNames()->first();
+                                echo $roleName ? ucwords($roleName) : '';
+                            @endphp
+                        </small>
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser">
@@ -20,12 +25,6 @@
                         <a class="dropdown-item d-flex align-items-center" href="#">
                             <i class="bi bi-person me-2"></i>
                             <span>Profile</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
-                            <i class="bi bi-gear me-2"></i>
-                            <span>Pengaturan</span>
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>

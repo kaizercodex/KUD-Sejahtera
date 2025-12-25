@@ -24,6 +24,14 @@
                         <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="role_id" class="form-label">Role</label>
+                        <select class="form-select" id="role_id" name="role_id">
+                            <option value="">Pilih Role</option>
+                        </select>
+                        <small class="form-text text-muted">Pilih role untuk user ini (opsional)</small>
+                    </div>
                     
                     <div class="mb-3" id="passwordGroup">
                         <label for="password" class="form-label">Password <span class="text-danger">*</span></label>

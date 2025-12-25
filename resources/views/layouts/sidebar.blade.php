@@ -49,26 +49,27 @@
                     </a>
                 </li>
                 
-                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') ? 'active' : '' }}">
+                @role('admin|operator|super admin')
+                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-file-earmark-text-fill"></i>
                         <span>Data Master</span>
                     </a>
-                    <ul class="submenu {{ request()->routeIs('user.*') ? 'active' : '' }}">
+                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') ? 'active' : '' }}">
+                        @can('user.view')
                         <li class="submenu-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
                             <a href="{{ route('user.index') }}" class="submenu-link">Data User</a>
                         </li>
-                        <li class="submenu-item">
-                            <a href="#" class="submenu-link">Laporan Simpanan</a>
+                        @endcan
+                        
+                        @can('role.view')
+                        <li class="submenu-item {{ request()->routeIs('role.*') ? 'active' : '' }}">
+                            <a href="{{ route('role.index') }}" class="submenu-link">Data Role</a>
                         </li>
-                        <li class="submenu-item">
-                            <a href="#" class="submenu-link">Laporan Pinjaman</a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="#" class="submenu-link">Laporan Anggota</a>
-                        </li>
+                        @endcan
                     </ul>
                 </li>
+                @endrole
                 
                 <li class="sidebar-item">
                     <a href="#" class='sidebar-link'>
@@ -82,16 +83,6 @@
                         <i class="bi bi-person-circle"></i>
                         <span>Profil Pengguna</span>
                     </a>
-                </li>
-                
-                <li class="sidebar-item">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class='sidebar-link' style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
-                            <i class="bi bi-box-arrow-left"></i>
-                            <span>Logout</span>
-                        </button>
-                    </form>
                 </li>
                 
             </ul>

@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Data Master User')
+@section('title', 'Data Master Role')
 
 @section('content')
 <div class="page-heading">
@@ -10,11 +10,11 @@
                 <nav aria-label="breadcrumb" class="breadcrumb-header">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Data Master User</li>
+                        <li class="breadcrumb-item active" aria-current="page">Data Master Role</li>
                     </ol>
                 </nav>
-                <h3>Data Master User</h3>
-                <p class="text-subtitle text-muted">Kelola data pengguna sistem</p>
+                <h3>Data Master Role</h3>
+                <p class="text-subtitle text-muted">Kelola data role pengguna sistem</p>
             </div>
         </div>
     </div>
@@ -23,29 +23,26 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Daftar User</h5>
-                    <button type="button" class="btn btn-primary" id="btnTambahUser">
-                        <i class="bi bi-plus-circle"></i> Tambah User
+                    <h5 class="card-title mb-0">Daftar Role</h5>
+                    <button type="button" class="btn btn-primary" id="btnTambahRole">
+                        <i class="bi bi-plus-circle"></i> Tambah Role
                     </button>
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tableUser" style="width:100%">
+                    <table class="table table-striped table-hover" id="tableRole" style="width:100%">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
+                                <th>Nama Role</th>
+                                <th>Guard</th>
                                 <th>Dibuat</th>
                                 <th>Diupdate</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- Data akan dimuat via AJAX --}}
                         </tbody>
                     </table>
                 </div>
@@ -56,44 +53,94 @@
 @endsection
 
 @push('scripts')
-@include('datamaster.user.modal-form')
+@include('datamaster.role.modal-form')
 <script>
-var allRoles = [];
+var allPermissions = [];
 
-function loadRoles() {
+function loadPermissions() {
     $.ajax({
-        url: "{{ route('user.roles') }}",
+        url: "{{ route('role.permissions') }}",
         type: 'GET',
         success: function(response) {
             if (response.success) {
-                allRoles = response.data;
-                populateRoleSelect();
+                allPermissions = response.data;
+                renderPermissions();
             }
         },
         error: function(xhr) {
-            console.error('Gagal memuat roles');
+            $('#permissionsContainer').html('<div class="col-12 text-danger">Gagal memuat permissions</div>');
         }
     });
 }
 
-function populateRoleSelect(selectedRoleId = null) {
-    var select = $('#role_id');
-    select.empty();
-    select.append('<option value="">Pilih Role</option>');
+function renderPermissions(selectedPermissions = []) {
+    var html = '';
+    var groupedPermissions = {};
     
-    allRoles.forEach(function(role) {
-        var selected = selectedRoleId && role.id == selectedRoleId ? 'selected' : '';
-        select.append('<option value="' + role.id + '" ' + selected + '>' + role.name + '</option>');
+    allPermissions.forEach(function(permission) {
+        var parts = permission.name.split('.');
+        var module = parts[0];
+        
+        if (!groupedPermissions[module]) {
+            groupedPermissions[module] = [];
+        }
+        groupedPermissions[module].push(permission);
+    });
+    
+    Object.keys(groupedPermissions).forEach(function(module) {
+        html += '<div class="col-md-6 mb-3">';
+        html += '<div class="card bg-light">';
+        html += '<div class="card-body">';
+        html += '<div class="d-flex justify-content-between align-items-center mb-2">';
+        html += '<h6 class="text-capitalize mb-0">' + module + '</h6>';
+        html += '<button type="button" class="btn btn-sm btn-outline-primary select-module-btn" data-module="' + module + '">';
+        html += '<i class="bi bi-check-all"></i> Ceklis Semua';
+        html += '</button>';
+        html += '</div>';
+        
+        groupedPermissions[module].forEach(function(permission) {
+            var checked = selectedPermissions.includes(permission.id) ? 'checked' : '';
+            html += '<div class="form-check">';
+            html += '<input class="form-check-input permission-checkbox module-' + module + '" type="checkbox" name="permissions[]" value="' + permission.id + '" id="perm_' + permission.id + '" data-module="' + module + '" ' + checked + '>';
+            html += '<label class="form-check-label" for="perm_' + permission.id + '">';
+            html += permission.name;
+            html += '</label>';
+            html += '</div>';
+        });
+        
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+    });
+    
+    $('#permissionsContainer').html(html);
+    updateModuleButtons();
+}
+
+function updateModuleButtons() {
+    $('.select-module-btn').each(function() {
+        var module = $(this).data('module');
+        var totalCheckboxes = $('.module-' + module).length;
+        var checkedCheckboxes = $('.module-' + module + ':checked').length;
+        
+        if (checkedCheckboxes === totalCheckboxes && totalCheckboxes > 0) {
+            $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+            $(this).html('<i class="bi bi-x-circle"></i> Batal Semua');
+        } else {
+            $(this).removeClass('btn-primary').addClass('btn-outline-primary');
+            $(this).html('<i class="bi bi-check-all"></i> Ceklis Semua');
+        }
     });
 }
 
 $(document).ready(function() {
-    loadRoles();
-    var table = $('#tableUser').DataTable({
+    loadPermissions();
+    
+    var table = $('#tableRole').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('user.datatable') }}",
+            url: "{{ route('role.datatable') }}",
             type: 'GET'
         },
         columns: [
@@ -108,19 +155,16 @@ $(document).ready(function() {
             },
             {
                 data: 'name',
-                name: 'name'
+                name: 'name',
+                render: function(data) {
+                    return data.split(' ').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ');
+                }
             },
             {
-                data: 'username',
-                name: 'username'
-            },
-            {
-                data: 'email',
-                name: 'email'
-            },
-            {
-                data: 'role_name',
-                name: 'role_name'
+                data: 'guard_name',
+                name: 'guard_name'
             },
             {
                 data: 'created_at',
@@ -192,69 +236,90 @@ $(document).ready(function() {
         },
         dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f><rtip',
         pageLength: 10,
-        order: [[4, 'desc']]
+        order: [[3, 'desc']]
     });
 
-    $('#btnTambahUser').on('click', function() {
-        $('#modalUserLabel').text('Tambah User');
-        $('#formUser')[0].reset();
-        $('#userId').val('');
-        populateRoleSelect();
-        $('#passwordGroup').show();
-        $('#passwordConfirmGroup').show();
-        $('#password').prop('required', true);
-        $('#password_confirmation').prop('required', true);
-        $('#modalUser').modal('show');
+    $('#btnTambahRole').on('click', function() {
+        $('#modalRoleLabel').text('Tambah Role');
+        $('#formRole')[0].reset();
+        $('#roleId').val('');
+        $('#selectAllPermissions').prop('checked', false);
+        renderPermissions([]);
+        $('#modalRole').modal('show');
     });
 
-    $('#tableUser').on('click', '.btn-edit', function() {
+    $(document).on('change', '#selectAllPermissions', function() {
+        $('.permission-checkbox').prop('checked', $(this).is(':checked'));
+        updateModuleButtons();
+    });
+
+    $(document).on('change', '.permission-checkbox', function() {
+        var allChecked = $('.permission-checkbox').length === $('.permission-checkbox:checked').length;
+        $('#selectAllPermissions').prop('checked', allChecked);
+        updateModuleButtons();
+    });
+
+    $(document).on('click', '.select-module-btn', function() {
+        var module = $(this).data('module');
+        var totalCheckboxes = $('.module-' + module).length;
+        var checkedCheckboxes = $('.module-' + module + ':checked').length;
+        
+        if (checkedCheckboxes === totalCheckboxes) {
+            $('.module-' + module).prop('checked', false);
+        } else {
+            $('.module-' + module).prop('checked', true);
+        }
+        
+        var allChecked = $('.permission-checkbox').length === $('.permission-checkbox:checked').length;
+        $('#selectAllPermissions').prop('checked', allChecked);
+        
+        updateModuleButtons();
+    });
+
+    $('#tableRole').on('click', '.btn-edit', function() {
         var id = $(this).data('id');
         
         $.ajax({
-            url: "{{ route('user.show', ':id') }}".replace(':id', id),
+            url: "{{ route('role.show', ':id') }}".replace(':id', id),
             type: 'GET',
             success: function(response) {
                 if (response.success) {
-                    $('#modalUserLabel').text('Edit User');
-                    $('#userId').val(response.data.id);
+                    $('#modalRoleLabel').text('Edit Role');
+                    $('#roleId').val(response.data.id);
                     $('#name').val(response.data.name);
-                    $('#username').val(response.data.username);
-                    $('#email').val(response.data.email);
-                    populateRoleSelect(response.data.role_id);
-                    $('#password').val('');
-                    $('#password_confirmation').val('');
-                    $('#passwordGroup').show();
-                    $('#passwordConfirmGroup').show();
-                    $('#password').prop('required', false);
-                    $('#password_confirmation').prop('required', false);
-                    $('#passwordHelp').text('Kosongkan jika tidak ingin mengubah password');
-                    $('#modalUser').modal('show');
+                    renderPermissions(response.data.permissions);
+                    
+                    var allChecked = $('.permission-checkbox').length === $('.permission-checkbox:checked').length;
+                    $('#selectAllPermissions').prop('checked', allChecked);
+                    
+                    $('#modalRole').modal('show');
                 }
             },
             error: function(xhr) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Gagal memuat data user'
+                    text: 'Gagal memuat data role'
                 });
             }
         });
     });
 
-    $('#formUser').on('submit', function(e) {
+    $('#formRole').on('submit', function(e) {
         e.preventDefault();
         
-        var userId = $('#userId').val();
-        var url = userId ? "{{ route('user.update', ':id') }}".replace(':id', userId) : "{{ route('user.store') }}";
-        var method = userId ? 'PUT' : 'POST';
+        var roleId = $('#roleId').val();
+        var url = roleId ? "{{ route('role.update', ':id') }}".replace(':id', roleId) : "{{ route('role.store') }}";
+        var method = roleId ? 'PUT' : 'POST';
+        
+        var selectedPermissions = [];
+        $('.permission-checkbox:checked').each(function() {
+            selectedPermissions.push($(this).val());
+        });
         
         var formData = {
             name: $('#name').val(),
-            username: $('#username').val(),
-            email: $('#email').val(),
-            role_id: $('#role_id').val(),
-            password: $('#password').val(),
-            password_confirmation: $('#password_confirmation').val(),
+            permissions: selectedPermissions,
             _token: '{{ csrf_token() }}'
         };
 
@@ -264,7 +329,7 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 if (response.success) {
-                    $('#modalUser').modal('hide');
+                    $('#modalRole').modal('hide');
                     table.ajax.reload();
                     Swal.fire({
                         icon: 'success',
@@ -296,12 +361,12 @@ $(document).ready(function() {
         });
     });
 
-    $('#tableUser').on('click', '.btn-delete', function() {
+    $('#tableRole').on('click', '.btn-delete', function() {
         var id = $(this).data('id');
         
         Swal.fire({
             title: 'Konfirmasi Hapus',
-            text: 'Apakah Anda yakin ingin menghapus user ini?',
+            text: 'Apakah Anda yakin ingin menghapus role ini?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -311,7 +376,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('user.destroy', ':id') }}".replace(':id', id),
+                    url: "{{ route('role.destroy', ':id') }}".replace(':id', id),
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -329,7 +394,7 @@ $(document).ready(function() {
                         }
                     },
                     error: function(xhr) {
-                        var message = xhr.responseJSON?.message || 'Gagal menghapus user';
+                        var message = xhr.responseJSON?.message || 'Gagal menghapus role';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -339,20 +404,6 @@ $(document).ready(function() {
                 });
             }
         });
-    });
-
-    $('#togglePassword').on('click', function() {
-        var passwordField = $('#password');
-        var type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-        passwordField.attr('type', type);
-        $(this).find('i').toggleClass('bi-eye bi-eye-slash');
-    });
-
-    $('#togglePasswordConfirm').on('click', function() {
-        var passwordField = $('#password_confirmation');
-        var type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-        passwordField.attr('type', type);
-        $(this).find('i').toggleClass('bi-eye bi-eye-slash');
     });
 });
 </script>
