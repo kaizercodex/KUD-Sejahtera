@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Custom Landing CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/css/custom_landing.css') }}">
+  <link rel="stylesheet" href="{{ asset('custom/css/custom_landing.css') }}">
 </head>
 
 <body>

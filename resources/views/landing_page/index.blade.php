@@ -17,7 +17,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <!-- Custom Landing CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/custom_landing.css') }}">
+    <link rel="stylesheet" href="{{ asset('custom/css/custom_landing.css') }}">
 
 </head>
 <body>

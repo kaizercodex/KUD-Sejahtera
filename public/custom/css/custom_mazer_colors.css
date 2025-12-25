@@ -1,0 +1,196 @@
+/* ============================================
+   CUSTOM MAZER COLOR THEME
+   Cara mengubah base color template Mazer
+   ============================================ */
+
+/* 
+   CARA PENGGUNAAN:
+   1. Ubah nilai warna pada CSS Variables di bawah sesuai kebutuhan
+   2. Include file CSS ini di layout utama setelah app.css
+   3. Refresh browser untuk melihat perubahan
+*/
+
+:root {
+    /* ===== PRIMARY COLOR (Warna Utama) ===== */
+    /* Default Mazer: #435ebe (biru) */
+    /* Ubah nilai di bawah ini untuk mengganti warna primary */
+    --bs-primary: #435ebe;
+    --bs-primary-rgb: 67, 94, 190;
+    
+    /* Variasi warna primary untuk berbagai state */
+    --bs-primary-text-emphasis: #1b264c;
+    --bs-primary-bg-subtle: #d9dff2;
+    --bs-primary-border-subtle: #b4bfe5;
+    
+    /* ===== SECONDARY COLOR (Warna Sekunder) ===== */
+    --bs-secondary: #6c757d;
+    --bs-secondary-rgb: 108, 117, 125;
+    
+    /* ===== SUCCESS COLOR (Hijau) ===== */
+    --bs-success: #198754;
+    --bs-success-rgb: 25, 135, 84;
+    
+    /* ===== INFO COLOR (Cyan) ===== */
+    --bs-info: #0dcaf0;
+    --bs-info-rgb: 13, 202, 240;
+    
+    /* ===== WARNING COLOR (Kuning) ===== */
+    --bs-warning: #ffc107;
+    --bs-warning-rgb: 255, 193, 7;
+    
+    /* ===== DANGER COLOR (Merah) ===== */
+    --bs-danger: #dc3545;
+    --bs-danger-rgb: 220, 53, 69;
+    
+    /* ===== LINK COLOR ===== */
+    --bs-link-color: var(--bs-primary);
+    --bs-link-color-rgb: var(--bs-primary-rgb);
+    --bs-link-hover-color: #ffffff;
+    --bs-link-hover-color-rgb: 54, 75, 152;
+}
+
+/* ============================================
+   CONTOH PENGGUNAAN WARNA CUSTOM
+   ============================================ */
+
+/* Uncomment salah satu contoh di bawah untuk mencoba warna berbeda */
+
+/* CONTOH 1: Warna Hijau (Cocok untuk Koperasi) */
+/*
+:root {
+    --bs-primary: #28a745;
+    --bs-primary-rgb: 40, 167, 69;
+    --bs-primary-text-emphasis: #0f3d1a;
+    --bs-primary-bg-subtle: #d4edda;
+    --bs-primary-border-subtle: #a9d9b5;
+    --bs-link-color: #28a745;
+    --bs-link-hover-color: #218838;
+}
+*/
+
+/* CONTOH 2: Warna Merah Marun (Elegan) */
+/*
+:root {
+    --bs-primary: #8b2635;
+    --bs-primary-rgb: 139, 38, 53;
+    --bs-primary-text-emphasis: #3a1016;
+    --bs-primary-bg-subtle: #f0d5d9;
+    --bs-primary-border-subtle: #d9a5ad;
+    --bs-link-color: #8b2635;
+    --bs-link-hover-color: #6d1e2a;
+}
+*/
+
+/* CONTOH 3: Warna Biru Tua (Professional) */
+/*
+:root {
+    --bs-primary: #003d82;
+    --bs-primary-rgb: 0, 61, 130;
+    --bs-primary-text-emphasis: #001a37;
+    --bs-primary-bg-subtle: #ccd9e8;
+    --bs-primary-border-subtle: #99b3d1;
+    --bs-link-color: #003d82;
+    --bs-link-hover-color: #002a5c;
+}
+*/
+
+/* CONTOH 4: Warna Orange (Energik) */
+/*
+:root {
+    --bs-primary: #ff6b35;
+    --bs-primary-rgb: 255, 107, 53;
+    --bs-primary-text-emphasis: #662b15;
+    --bs-primary-bg-subtle: #ffe0d5;
+    --bs-primary-border-subtle: #ffc1ab;
+    --bs-link-color: #ff6b35;
+    --bs-link-hover-color: #e55a2b;
+}
+*/
+
+/* CONTOH 5: Warna Ungu (Modern) */
+/*
+:root {
+    --bs-primary: #6f42c1;
+    --bs-primary-rgb: 111, 66, 193;
+    --bs-primary-text-emphasis: #2d1a4d;
+    --bs-primary-bg-subtle: #e7dff7;
+    --bs-primary-border-subtle: #cfbfef;
+    --bs-link-color: #6f42c1;
+    --bs-link-hover-color: #59359a;
+}
+*/
+
+/* ============================================
+   CARA MEMBUAT WARNA CUSTOM SENDIRI
+   ============================================ */
+
+/*
+LANGKAH-LANGKAH:
+1. Pilih warna utama (misalnya: #ff5733)
+2. Konversi ke RGB (gunakan tool online atau DevTools)
+   Contoh: #ff5733 = rgb(255, 87, 51)
+3. Buat variasi warna:
+   - text-emphasis: warna lebih gelap (untuk teks)
+   - bg-subtle: warna sangat terang (untuk background)
+   - border-subtle: warna terang (untuk border)
+   - hover: warna sedikit lebih gelap (untuk hover state)
+
+TOOL YANG BISA DIGUNAKAN:
+- https://www.colorhexa.com/ (untuk konversi warna)
+- https://coolors.co/ (untuk membuat palet warna)
+- Chrome DevTools (inspect element dan lihat computed styles)
+
+TEMPLATE CUSTOM:
+:root {
+    --bs-primary: #XXXXXX;              // Warna utama Anda
+    --bs-primary-rgb: R, G, B;          // Nilai RGB dari warna utama
+    --bs-primary-text-emphasis: #XXXXXX; // Warna gelap untuk teks
+    --bs-primary-bg-subtle: #XXXXXX;    // Warna sangat terang untuk background
+    --bs-primary-border-subtle: #XXXXXX; // Warna terang untuk border
+    --bs-link-color: #XXXXXX;           // Sama dengan primary
+    --bs-link-hover-color: #XXXXXX;     // Sedikit lebih gelap dari primary
+}
+*/
+
+/* ============================================
+   KOMPONEN YANG TERPENGARUH
+   ============================================ */
+
+/*
+Dengan mengubah --bs-primary, komponen berikut akan berubah warnanya:
+1. Tombol primary (.btn-primary)
+2. Link/tautan
+3. Sidebar menu aktif
+4. Progress bar
+5. Badge primary
+6. Alert primary
+7. Form focus state
+8. Checkbox/radio yang dicentang
+9. Pagination aktif
+10. Dan semua komponen yang menggunakan warna primary
+*/
+
+/* ============================================
+   TIPS TAMBAHAN
+   ============================================ */
+
+/*
+1. Untuk dark mode, tambahkan:
+[data-bs-theme="dark"] {
+    --bs-primary: #XXXXXX;
+    // ... variabel lainnya
+}
+
+2. Untuk mengubah warna sidebar khusus:
+#sidebar {
+    --bs-primary: #XXXXXX;
+}
+
+3. Untuk mengubah warna navbar khusus:
+.navbar {
+    --bs-primary: #XXXXXX;
+}
+
+4. Pastikan kontras warna cukup baik untuk aksesibilitas
+   (gunakan tool seperti https://webaim.org/resources/contrastchecker/)
+*/
