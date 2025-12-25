@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Datamaster\UserController;
 use App\Http\Controllers\Datamaster\RoleController;
+use App\Http\Controllers\Datamaster\PesertaPlasmaController;
+
 
 Route::get('/', function () {
     return view('landing_page.index');
@@ -45,6 +47,13 @@ Route::middleware('auth')->group(function () {
             Route::put('/role/{id}', [RoleController::class, 'update'])->name('role.update');
             Route::delete('/role/{id}', [RoleController::class, 'destroy'])->name('role.destroy');
         });
+
+        Route::get('/peserta-plasma', [PesertaPlasmaController::class, 'index'])->name('peserta-plasma.index');
+        Route::get('/peserta-plasma/datatable', [PesertaPlasmaController::class, 'getDatatablesPesertaPlasma'])->name('peserta-plasma.datatable');
+        Route::post('/peserta-plasma', [PesertaPlasmaController::class, 'store'])->name('peserta-plasma.store');
+        Route::get('/peserta-plasma/{id}', [PesertaPlasmaController::class, 'show'])->name('peserta-plasma.show');
+        Route::post('/peserta-plasma/{id}', [PesertaPlasmaController::class, 'update'])->name('peserta-plasma.update');
+        Route::delete('/peserta-plasma/{id}', [PesertaPlasmaController::class, 'destroy'])->name('peserta-plasma.destroy');
     });
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

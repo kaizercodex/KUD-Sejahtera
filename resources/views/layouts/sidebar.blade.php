@@ -50,12 +50,12 @@
                 </li>
                 
                 @role('admin|operator|super admin')
-                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-file-earmark-text-fill"></i>
                         <span>Data Master</span>
                     </a>
-                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') ? 'active' : '' }}">
+                    <ul class="submenu {{ request()->routeIs('user.*') || request()->routeIs('role.*') || request()->routeIs('peserta-plasma.*') ? 'active' : '' }}">
                         @can('user.view')
                         <li class="submenu-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
                             <a href="{{ route('user.index') }}" class="submenu-link">Data User</a>
@@ -65,6 +65,12 @@
                         @can('role.view')
                         <li class="submenu-item {{ request()->routeIs('role.*') ? 'active' : '' }}">
                             <a href="{{ route('role.index') }}" class="submenu-link">Data Role</a>
+                        </li>
+                        @endcan
+                        
+                        @can('peserta_plasma.view')
+                        <li class="submenu-item {{ request()->routeIs('peserta-plasma.*') ? 'active' : '' }}">
+                            <a href="{{ route('peserta-plasma.index') }}" class="submenu-link">Peserta Plasma</a>
                         </li>
                         @endcan
                     </ul>

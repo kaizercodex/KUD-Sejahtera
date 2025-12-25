@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
-  <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+  <link rel="apple-touch-icon" sizes="76x76" href="#">
+  <link rel="icon" type="image/png" href="#">
   <title>Login - {{ config('app.name') }}</title>
   
   <!-- Fonts -->
@@ -60,14 +60,14 @@
           @csrf
           
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="username">Username</label>
             <input 
-              type="email" 
-              name="email" 
-              id="email"
+              type="text" 
+              name="username" 
+              id="username"
               class="form-control" 
-              placeholder="nama@email.com" 
-              value="{{ old('email') }}" 
+              placeholder="Masukkan username Anda" 
+              value="{{ old('username') }}" 
               required 
               autofocus
             >

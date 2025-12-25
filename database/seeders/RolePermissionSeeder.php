@@ -28,6 +28,12 @@ class RolePermissionSeeder extends Seeder
             'role.create',
             'role.edit',
             'role.delete',
+
+            // Peserta Plasma
+            'peserta_plasma.view',
+            'peserta_plasma.create',
+            'peserta_plasma.edit',
+            'peserta_plasma.delete',
         ];
 
         foreach ($permissions as $permission) {
